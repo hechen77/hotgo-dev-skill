@@ -1,6 +1,6 @@
 # HotGo 深入浅出 —— 全栈开发规范指南
 
-> 全面解析 HotGo v2 框架的全栈开发规范。涵盖服务端（Go + GoFrame v2）、Web 管理后台（Vue 3 + Naive UI）、移动端 App（Flutter + GetX）、桌面端应用（Flutter Desktop）、微信小程序（Uni-app + uv-ui）等五大平台的完整开发规范。
+> 全面解析 HotGo v2 框架的全栈开发规范。涵盖服务端（Go + GoFrame v2）、Web 管理后台（Vue 3 + Naive UI）、移动端 App（Flutter + GetX）、桌面端应用（Flutter Desktop）、微信小程序（Uni-app + wot-ui (wot-design-uni)）等五大平台的完整开发规范。
 
 ---
 
@@ -78,6 +78,6 @@
 - [TDesign Flutter 文档](https://tdesign.tencent.com/flutter)
 - [Flutter 官方文档](https://flutter.dev)
 - [Uni-app 官方文档](https://uniapp.dcloud.net.cn)
-- [uv-ui 文档](https://www.uvui.cn)
+- [wot-ui (wot-design-uni) 文档](https://wot-ui.cn/) · [插件市场](https://ext.dcloud.net.cn/plugin?id=27534)
 
 ---

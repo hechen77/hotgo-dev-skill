@@ -49,7 +49,7 @@ SKILL.md
 | Web 后台 | Vue3 + Naive UI | 04 | BasicTable/BasicModal/BasicForm | 列表页→04§8 · 编辑页→04§9 · 字典→04§10 · 避坑→08 |
 | 移动端 | Flutter + GetX + TDesign | 05 | Controller 分离、try-catch 全覆盖 | 创建→05§1 · HTTP→05§8 · Controller→05§13 · WS→05§15 · 避坑→08 |
 | 桌面端 | Flutter Desktop + Forui + TDesign | 06 | 窗口管理、托盘、14 项差异 | 创建→06§1 · 窗口→06§7 · 托盘→06§8 · 标题栏→06§10 · 差异表→06§17 · 避坑→08 |
-| 小程序 | Uni-app + uv-ui | 07 | 条件编译、rpx、pages.json | 创建→07§1 · 页面→07§10 · 配置→07§2/3 · API→07§9 · 避坑→08 |
+| 小程序 | Uni-app + wot-ui (wot-design-uni) | 07 | 条件编译、rpx、pages.json | 创建→07§1 · 页面→07§10 · 配置→07§2/3 · API→07§9 · 避坑→08 |
 
 通用文档注释：08-常见错误与禁止清单、09-完整CRUD开发流程 按需读取。
 
@@ -90,7 +90,7 @@ SKILL.md
 | Web 前端 | 四人组协同（API/model.ts/index.vue/edit.vue） | 四个文件全部给出 → 字典用法 → 组件选型 |
 | 移动端 | Controller + View 分离、try-catch 全覆盖、Service 初始化顺序 | Controller 模板 → API 调用 → 生命周期 |
 | 桌面端 | 窗口管理配对、托盘流程、Forui 组件 | 窗口/托盘 Service → 标题栏/侧边栏组件 |
-| 小程序 | pages.json 路由、条件编译、uv-ui props | 页面模板 → 配置片段 → 单位规范 |
+| 小程序 | pages.json 路由、条件编译、wot-ui (wot-design-uni) props | 页面模板 → 配置片段 → 单位规范 |
 
 ## Part 3：执行流程
 

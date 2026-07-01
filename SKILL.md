@@ -36,7 +36,7 @@ description: HotGo v2 全栈开发规范。TRIGGER when user asks about HotGo pr
 | `references/04-后台-开发规范.md` | Vite 代理、Pinia Store、列表/编辑页标准写法、字典系统、权限控制 | 写 Vue3 页面、配代理、加菜单 |
 | `references/05-移动端-开发规范.md` | pubspec 每个依赖详解、Android 签名、文件清单、Controller 规范、WS 体系 | 写 Flutter App 代码 |
 | `references/06-桌面端-开发规范.md` | 窗口管理、系统托盘、自定义标题栏/侧边栏、Forui 主题、与移动端 14 项差异 | 写 Flutter 桌面端代码 |
-| `references/07-小程序-开发规范.md` | pages.json、manifest.json、uv-ui 组件、条件编译、rpx 单位 | 写 Uni-app 小程序代码 |
+| `references/07-小程序-开发规范.md` | pages.json、manifest.json、wot-ui (wot-design-uni) 组件、条件编译、rpx 单位 | 写 Uni-app 小程序代码 |
 | `references/08-通用-常见错误与禁止清单.md` | 五端禁止行为 + 常见错误模式 + 正确做法对照 | 用户报错、代码 review、自查 |
 | `references/09-通用-完整CRUD开发流程.md` | 建表到前端渲染的 16 个文件完整流程 | 新建 CRUD 模块、问"要改哪些文件" |
 | `references/10-后端-HotGo详解与扩展点.md` | 30 个子系统、40+ 扩展点速查总表 | 深入理解框架、做扩展开发 |
@@ -55,7 +55,7 @@ description: HotGo v2 全栈开发规范。TRIGGER when user asks about HotGo pr
 | **Web 后台** | Vue 3 + Naive UI | 04 | BasicTable/BasicModal/BasicForm、字典用 computed | 列表页→04§8 · 编辑页→04§9 · 字典→04§10 · API封装→04§6 · 权限→04§11 · 路由→04§12 · 避坑→08§2 |
 | **移动端 App** | Flutter + GetX + TDesign | 05 | Controller 分离、try-catch 全覆盖、AppLogger | 创建→05§1 · pubspec→05§2 · HTTP→05§8 · Controller→05§13 · Service→05§10 · WS→05§15 · 路由→05§11 · 避坑→08§3 |
 | **桌面端** | Flutter Desktop + Forui + TDesign | 06 | 窗口管理、托盘、与移动端 14 项差异 | 创建→06§1 · 窗口→06§7 · 托盘→06§8 · 标题栏→06§10 · 侧边栏→06§11 · Forui→06§13 · 差异表→06§17 · 避坑→08§4 |
-| **小程序** | Uni-app + uv-ui | 07 | 条件编译、rpx 单位、pages.json 注册 | 创建→07§1 · manifest→07§2 · pages→07§3 · API→07§9 · 页面→07§10 · 生命周期→07§11 · 避坑→08§5 |
+| **小程序** | Uni-app + wot-ui (wot-design-uni) | 07 | 条件编译、rpx 单位、pages.json 注册 | 创建→07§1 · manifest→07§2 · pages→07§3 · API→07§9 · 页面→07§10 · 生命周期→07§11 · 避坑→08§5 |
 
 > 以上未列出的场景，以及跨端通用问题（如完整 CRUD 流程），读 `08-通用-常见错误与禁止清单` 和 `09-通用-完整CRUD开发流程`。
 
@@ -87,9 +87,11 @@ description: HotGo v2 全栈开发规范。TRIGGER when user asks about HotGo pr
 | **① 读文档** | 根据[各端速查](#各端速查)定位并**实际读取**对应 references 文档 | 不可凭记忆回答。该读几个读几个——后端建表需同时读 02+11，鉴权问题需读 02+12                    |
 | **② 自检**  | 对照[禁止事项矩阵](#禁止事项矩阵)逐条检查方案/代码               | 问自己：我的方案/代码有没有踩中禁止清单？踩中则**必须先警告用户**，再给出正确方案                     |
 | **③ 输出**  | 按[分端回答策略](#分端回答策略)组织输出                     | 完整代码模板（可直接复制粘贴）+ 解释为什么 + 标注文档出处（文档名 § 章节）                       |
-| **④ 审查**  | 输出代码后**再次**对照禁止矩阵逐条检查                      | 发现不合规立即告知用户修正，修正后输出最终版本。检查项包括但不限于：代码是否有禁止 API、文件位置是否正确、必要写法是否遗漏 |
+| **④ 审查**  | 输出代码后**逐条执行**[审查检查清单](#审查检查清单)中的每一项 | **不可凭感觉判断"应该没问题"**。每项检查是一个具体的搜索/扫描动作，必须实际执行。发现违规 → 立即修正 → 修正后重新检查该项。全部通过后才能输出最终版本 |
 
 > **违反此链路（如未读文档就凭记忆回答、未自检就输出代码、输出后未审查）视为 skill 执行失败。**
+>
+> **⚠️ ③输出步骤同样适用审查检查清单**：在写代码时就逐条确保不触发任何检查项，而不是写完再修。
 
 ## 禁止事项矩阵
 
@@ -112,6 +114,8 @@ description: HotGo v2 全栈开发规范。TRIGGER when user asks about HotGo pr
 | 修改 `internal/library/` 下的基础库 | 优先查扩展点（Hook/Handler/接口），在 `utility/` 添加工具或提 issue |
 | `err != nil` 后不 `return` 继续执行 | 必须立即 `return` |
 | 用 `err1/err2` 绕过命名返回值 `err` | 始终使用命名返回值 `err` |
+| logic 层裸 `return err` 不包装业务上下文 | 用 `gerror.Wrap(err, "操作XXX失败")` |
+| 业务校验用裸 `return gerror.New()` 但不赋值给 err | 用 `return gerror.New("XXX不能为空")` |
 
 ### Web 前端 (Vue 3 + Naive UI)
 
@@ -166,7 +170,524 @@ description: HotGo v2 全栈开发规范。TRIGGER when user asks about HotGo pr
 | **Web 前端** | API 封装 → model.ts → index.vue → edit.vue 四人组协同 | 四个文件全部给出 → 字典用法（loadOptions+getLabel+computed） → 组件选型（BasicTable/BasicModal/BasicForm） |
 | **移动端** | Controller + View 分离、try-catch 全覆盖、Service 初始化顺序 | Controller 模板（含 onInit/onClose/loadList） → API 调用 → WS 连接/断开 |
 | **桌面端** | 窗口管理配对、托盘流程、Forui 组件使用 | 窗口/托盘 Service 完整代码 → 自定义标题栏/侧边栏 → main.dart 启动流程 |
-| **小程序** | pages.json 路由注册、条件编译片段、uv-ui 组件 props | 完整页面模板（template + script setup + style scoped） → 配置片段 → rpx 单位 |
+| **小程序** | pages.json 路由注册、条件编译片段、wot-ui (wot-design-uni) 组件 props | 完整页面模板（template + script setup + style scoped） → 配置片段 → rpx 单位 |
+
+---
+
+## 审查检查清单
+
+> **③输出和④审查步骤都必须逐条执行以下检查。每项检查是一个具体的搜索/扫描动作，不可凭感觉跳过。发现违规 → 立即修正 → 重新检查该项。**
+
+### 后端 Logic 层（Go）
+
+**这是最容易被 AI 写出违规代码的区域，必须严格检查。**
+
+#### 1. Logic 函数必须有 struct receiver
+
+| 动作 | 内容 |
+|------|------|
+| **搜索** | 扫描整个 logic 文件，检查每个导出函数 |
+| **违规特征** | `func MethodName(ctx context.Context, ...)` — 裸函数，没有任何 `(s *sXxx)` receiver |
+| **正确写法** | `func (s *sSysArticle) Edit(ctx context.Context, in *sysin.ArticleEditInp) (id int64, err error)` |
+| **修复** | 所有导出方法必须挂在 `sSysXxx` struct 上，添加 `init()` 注册到 service |
+
+```
+❌ 违规:
+func LoginByPhone(ctx context.Context, phone string) (string, error) { ... }
+func GetDepts(ctx context.Context) ([]*DeptInfo, error) { ... }
+
+✅ 正确:
+type sSysInspectionMember struct{}
+func (s *sSysInspectionMember) LoginByPhone(ctx context.Context, phone string) (string, error) { ... }
+func (s *sSysInspectionMember) GetDepts(ctx context.Context) ([]*DeptInfo, error) { ... }
+```
+
+#### 2. Logic 必须有 Model() 方法并统一使用
+
+| 动作 | 内容 |
+|------|------|
+| **搜索** | 在 logic 文件中搜索 `func.*Model\(` 是否存在 |
+| **违规特征** | 文件中没有 `Model()` 方法，所有 DAO 调用都是 `dao.Xxx.Ctx(ctx)` 直接裸调 |
+| **正确写法** | `func (s *sSysXxx) Model(ctx context.Context, option ...*handler.Option) *gdb.Model { return handler.Model(dao.XxxTable.Ctx(ctx), option...) }` |
+| **修复** | 添加 `Model()` 方法，所有 `dao.Xxx.Ctx(ctx)` 替换为 `s.Model(ctx)` |
+
+```
+❌ 违规:
+dao.InspectionMember.Ctx(ctx).Where(...).Scan(&member)
+dao.InspectionRecord.Ctx(ctx).Data(g.Map{...}).InsertAndGetId()
+
+✅ 正确:
+s.Model(ctx).Where(...).Scan(&member)
+s.Model(ctx).Data(g.Map{...}).InsertAndGetId()
+```
+
+#### 3. 禁止硬编码字段名字符串
+
+| 动作 | 内容 |
+|------|------|
+| **搜索** | 扫描以下模式的字符串字面量：`"field_name"` 出现在 `.Where()`、`.Fields()`、`.OrderDesc()`、`.Data()`、`.WherePri()`、`.WhereIn()`、`.WhereLike()`、`.WhereGTE()`、`fmt.Sprintf` 与 `dao.` 组合的地方 |
+| **违规特征** | 字符串包含蛇形字段名如 `"inspect_date"` `"created_at"` `"record_id"` `"member_id"` `"phone"` `"real_name"` `"status"` 等，直接作为 DAO 方法的参数 |
+| **正确写法** | 必须用 `dao.Xxx.Columns().FieldName` |
+| **修复** | 每个硬编码字段名字符串 → `dao.对应表.Columns().字段名` |
+
+```
+❌ 违规:
+mod = mod.Fields("inspect_date")
+mod = mod.Where("status", 1)
+mod = mod.OrderDesc("id")
+mod = mod.WhereIn("id", ids)
+.Data(g.Map{"phone": phone, "real_name": realName})
+fmt.Sprintf("%s.item_id", dao.InspectionPlantItem.Table())
+fmt.Sprintf("TO_CHAR(%s.inspect_date, 'YYYY-MM-DD')", recordTable)
+
+✅ 正确:
+rcols := dao.InspectionRecord.Columns()
+mod = mod.Fields(rcols.InspectDate)
+mod = mod.Where(rcols.Status, 1)
+mod = mod.OrderDesc(rcols.Id)
+mod = mod.WhereIn(rcols.Id, ids)
+.Data(g.Map{cols.Phone: phone, cols.RealName: realName})
+// 跨表引用: dao.InspectionPlantItem.Columns().ItemId
+// TO_CHAR 场景: FieldsExpr 或单独处理，但绝不能 fmt.Sprintf 拼字段名
+```
+
+#### 4. 禁止 `g.DB().Transaction()` 直接操作
+
+| 动作 | 内容 |
+|------|------|
+| **搜索** | 搜索 `g\.DB\(\)\.Transaction` 或 `g\.DB\(\)\.` 开头的事务调用 |
+| **违规特征** | logic 中直接调用 `g.DB().Transaction(ctx, func(ctx context.Context, tx gdb.TX) error { ... })` |
+| **正确写法** | 通过 `s.Model(ctx)` 走 handler 事务，或 `dao.Xxx.Transaction(ctx, func(...) error { ... })` |
+| **修复** | 替换为 `s.Model(ctx)` 或 `dao.Xxx.Transaction()` |
+
+```
+❌ 违规:
+return g.DB().Transaction(ctx, func(ctx context.Context, tx gdb.TX) (err error) {
+    _, err = dao.InspectionRecord.Ctx(ctx).Data(...).Insert()
+    ...
+})
+
+✅ 正确:
+return dao.InspectionRecord.Transaction(ctx, func(ctx context.Context, tx gdb.TX) error {
+    _, err := dao.InspectionRecord.Ctx(ctx).TX(tx).Data(...).Insert()
+    ...
+})
+```
+
+#### 5. DTO 定义必须放在正确位置
+
+| 动作 | 内容 |
+|------|------|
+| **搜索** | 在 logic 文件中搜索 `type.*struct` |
+| **违规特征** | logic 文件中有带 `json:"..."` tag 的结构体定义（入参/出参 DTO） |
+| **正确写法** | 入参/出参/过滤模型统一放在 `internal/model/input/sysin/<module>.go`，logic 只保留纯内部辅助结构体（无 json tag） |
+| **修复** | 移动到 `model/input/sysin/` 对应文件 |
+
+```
+❌ 违规 (logic 文件中):
+type DeptInfo struct {
+    Id   int64  `json:"id"`
+    Name string `json:"name"`
+}
+
+✅ 正确 (移动到 model/input/sysin/inspection.go):
+type InspectionDeptModel struct {
+    Id   int64  `json:"id"`
+    Name string `json:"name"`
+}
+```
+
+#### 6. Logic 必须有 `init()` 注册
+
+| 动作 | 内容 |
+|------|------|
+| **搜索** | 搜索 `func init\(\)` |
+| **违规特征** | logic 文件缺少 `init()` 函数调用 `service.RegisterXxx()` |
+| **正确写法** | 必须有 `func init() { service.RegisterXxx(NewXxx()) }` |
+| **修复** | 添加 init() + NewXxx() + service 接口声明和注册函数 |
+
+```
+❌ 违规:
+// 文件没有任何 init() 函数
+
+✅ 正确:
+type sSysInspection struct{}
+func init() { service.RegisterSysInspection(NewSysInspection()) }
+func NewSysInspection() *sSysInspection { return &sSysInspection{} }
+func (s *sSysInspection) Model(ctx context.Context, option ...*handler.Option) *gdb.Model {
+    return handler.Model(dao.InspectionMember.Ctx(ctx), option...)
+}
+```
+
+#### 7. 禁止 `fmt.Println` / `print`
+
+| 动作 | 内容 |
+|------|------|
+| **搜索** | 搜索 `fmt\.Print` 或裸 `print\(` |
+| **违规特征** | 任何 `fmt.Println(...)` / `fmt.Print(...)` / `print(...)` |
+| **正确写法** | `g.Log().Infof(ctx, ...)` / `g.Log().Warningf(ctx, ...)` |
+| **修复** | 替换为 g.Log() 并确保第一个参数是 ctx |
+
+#### 8. 错误处理必须规范（gerror.Wrap / gerror.New / 快返）
+
+> **核心原则**：logic 层是错误处理的边界——底层错误用 `gerror.Wrap` 追加上下文，业务校验失败用 `gerror.New` 创建新错误。controller 层只透传不包装。
+
+| 场景 | 正确写法 | 说明 |
+|------|---------|------|
+| **底层返回 err**（dao/API/库调用失败） | `gerror.Wrap(err, "操作XXX失败")` | 保留原始 err 供日志排查，外层用户看到友好提示。**禁止**裸 `return err` |
+| **业务校验不通过**（err 为 nil 但要报错） | `gerror.New("XXX不能为空")` | 纯业务逻辑错误，没有底层 err 可包装 |
+| **格式化错误信息** | `gerror.Newf("订单 %d 状态不合法", id)` | 需要动态参数的场景 |
+
+| 动作 | 内容 |
+|------|------|
+| **搜索** | 搜索 `return err` — 检查是否裸返回底层 err 没有 Wrap；搜索 `err != nil` — 检查其后是否立即 return |
+| **违规特征 1** | logic 层直接 `return err` 裸返回底层错误，没有用 `gerror.Wrap` 追加业务上下文 |
+| **违规特征 2** | `err != nil` 后没有 `return`，继续执行后续代码，导致 err 被覆盖或触发 panic |
+| **违规特征 3** | 用 `err1/err2` 等变量名绕过命名返回值 `err` |
+| **修复** | 见下方正确示例 |
+
+```
+❌ 违规 1 — 裸返回底层 err:
+rows, err := dao.Article.Ctx(ctx).Where(...).All()
+if err != nil {
+    return err  // 用户看到的是数据库英文错误，不是"获取文章列表失败"
+}
+
+❌ 违规 2 — 业务校验用裸 gerror.New 但忘记 return:
+if in.Title == "" {
+    gerror.New("标题不能为空")  // 创建了 error 但没有赋值给 err，也没有 return！
+}
+// 继续往下执行...
+
+❌ 违规 3 — 用 err1/err2 绕过命名返回值:
+func Save(ctx context.Context) (err error) {
+    err1 := operation1()  // 不应该用 err1
+    err2 := operation2()  // 不应该用 err2
+    return nil             // 丢失了错误
+}
+
+✅ 正确:
+// 场景 A: 底层返回 err → gerror.Wrap 追加上下文
+rows, err := dao.Article.Ctx(ctx).Where(...).All()
+if err != nil {
+    return gerror.Wrap(err, "获取文章列表失败")
+}
+
+// 场景 B: 业务校验不通过 → gerror.New
+if in.Title == "" {
+    return gerror.New("文章标题不能为空")
+}
+
+// 场景 C: 需要动态参数 → gerror.Newf
+if in.Status < 1 || in.Status > 3 {
+    return gerror.Newf("状态值 %d 不合法", in.Status)
+}
+
+// 场景 D: 始终使用命名返回值 err
+func Save(ctx context.Context) (err error) {
+    if err = operation1(); err != nil {
+        return  // err 已赋值，直接 return
+    }
+    if err = operation2(); err != nil {
+        return
+    }
+    return
+}
+```
+
+> **⚠️ controller 层的特殊规则**：controller 收到 logic 返回的 err 时 **禁止再次 Wrap**——logic 已经 Wrap 过了。controller 直接 `if err != nil { return }` 透传即可（见[检查项 10](#10-controller-禁止包装-error)）。
+
+### 后端 Controller 层（Go）
+
+#### 9. Controller 禁止直接调用 dao
+
+| 动作 | 内容 |
+|------|------|
+| **搜索** | 在 `controller/admin/sys/` 目录的 Go 文件中搜索 `dao\.` |
+| **违规特征** | controller 文件中有 `dao.Xxx.Ctx(ctx)` 或任何 `dao.` 调用 |
+| **正确写法** | controller 只能调用 `service.Xxx().Method(ctx, ...)`，不直接接触 dao |
+| **修复** | `dao.Xxx.Ctx(ctx).Where(...)` → `service.SysXxx().Method(ctx, ...)` |
+
+```
+❌ 违规:
+func (c *cArticle) List(ctx context.Context, req *article.ListReq) (res *article.ListRes, err error) {
+    list, err := dao.Article.Ctx(ctx).Where(...).Scan(&list) // controller 里调了 dao
+    ...
+}
+
+✅ 正确:
+func (c *cArticle) List(ctx context.Context, req *article.ListReq) (res *article.ListRes, err error) {
+    list, totalCount, err := service.SysArticle().List(ctx, &req.ArticleListInp) // 只调 service
+    ...
+}
+```
+
+#### 10. Controller 禁止包装 error
+
+| 动作 | 内容 |
+|------|------|
+| **搜索** | controller 文件中 `gerror.Wrap` / `g.Log().Error` / `g.Log().Errorf` |
+| **违规特征** | controller 包装了 error 或打印了框架已处理的错误日志 |
+| **正确写法** | `if err != nil { return }` — 直接透传，不包装不打印 |
+| **修复** | 删除 gerror.Wrap / g.Log().Error 调用，改为直接 return |
+
+```
+❌ 违规:
+func (c *cArticle) Edit(ctx context.Context, req *article.EditReq) (res *article.EditRes, err error) {
+    id, err := service.SysArticle().Edit(ctx, &req.ArticleEditInp)
+    if err != nil {
+        g.Log().Errorf(ctx, "编辑失败: %+v", err)
+        return nil, gerror.Wrap(err, "编辑文章失败")
+    }
+    ...
+}
+
+✅ 正确:
+func (c *cArticle) Edit(ctx context.Context, req *article.EditReq) (res *article.EditRes, err error) {
+    id, err := service.SysArticle().Edit(ctx, &req.ArticleEditInp)
+    if err != nil {
+        return
+    }
+    ...
+}
+```
+
+#### 11. Controller 列表为空时必须返回空数组
+
+| 动作 | 内容 |
+|------|------|
+| **搜索** | controller 的 List 方法 |
+| **违规特征** | 列表查询后 `list` 为 nil 时直接赋值给 `res.List = list`，导致 JSON 返回 null |
+| **正确写法** | `if list == nil { list = []*sysin.XxxListModel{} }` |
+| **修复** | 添加空数组初始化判断 |
+
+```
+❌ 违规:
+res.List = list  // list 可能是 nil，前端收到 "list": null
+
+✅ 正确:
+if list == nil {
+    list = []*sysin.XxxListModel{}
+}
+res.List = list  // "list": []
+```
+
+### 后端 Service 层（Go）
+
+#### 12. Service 文件只能追加不能新建
+
+| 动作 | 内容 |
+|------|------|
+| **搜索** | `internal/service/` 目录下是否有 `sys.go` 之外的 `.go` 文件 |
+| **违规特征** | 在 `internal/service/` 下新建了独立的 service 文件（如 `internal/service/article.go`） |
+| **正确写法** | 所有 sys 模块的 service 接口声明都追加到 `internal/service/sys.go` |
+| **修复** | 将新建文件的接口声明 + 注册函数移到 sys.go 末尾，删除新建文件 |
+
+#### 13. Service 注册模式必须完整
+
+| 动作 | 内容 |
+|------|------|
+| **搜索** | `internal/service/sys.go` 中每个模块的声明块 |
+| **检查** | 每个模块必须包含三要素：① `ISysXxx` interface 声明 ② `insSysXxx` 私有实例变量 ③ `SysXxx()` 获取函数 ④ `RegisterSysXxx()` 注册函数 |
+| **违规特征** | 模块缺少注册函数（只有 interface 声明没有 RegisterXxx），导致 logic 注册时会报"未注册" panic |
+| **修复** | 补全四要素 |
+
+```
+❌ 违规:
+type ISysArticle interface { List(...) ... }
+var insSysArticle ISysArticle
+func SysArticle() ISysArticle { ... }
+// 缺少 RegisterSysArticle
+
+✅ 正确:
+type ISysArticle interface { List(...) ... }
+var insSysArticle ISysArticle
+func SysArticle() ISysArticle {
+    if insSysArticle == nil { panic("SysArticle 未注册") }
+    return insSysArticle
+}
+func RegisterSysArticle(i ISysArticle) { insSysArticle = i }
+```
+
+### 后端 Model/Input 层（Go）
+
+#### 14. Model 必须包含字段白名单
+
+| 动作 | 内容 |
+|------|------|
+| **搜索** | `model/input/sysin/<module>.go` 文件 |
+| **违规特征** | 文件中没有定义 `XxxUpdateFields` 和 `XxxInsertFields` 结构体 |
+| **正确写法** | 必须定义 `XxxUpdateFields`（更新白名单）和 `XxxInsertFields`（嵌 Update + CreatedBy） |
+| **修复** | 添加字段白名单结构体 |
+
+```
+❌ 违规:
+// 没有定义 UpdateFields，直接用 entity 更新
+
+✅ 正确:
+type ArticleUpdateFields struct {
+    Title   string `json:"title"`
+    Status  int    `json:"status"`
+    Sort    int    `json:"sort"`
+    Remark  string `json:"remark"`
+}
+type ArticleInsertFields struct {
+    ArticleUpdateFields
+    CreatedBy int64 `json:"createdBy"`
+}
+```
+
+#### 15. EditInp 必须嵌入 entity 并有 Filter() 校验
+
+| 动作 | 内容 |
+|------|------|
+| **搜索** | `model/input/sysin/<module>.go` 中的 `XxxEditInp` 类型 |
+| **违规特征** | EditInp 没有嵌入 entity，或没有 `Filter(ctx)` 方法 |
+| **正确写法** | 嵌入 `entity.XxxTable`，实现 `func (in *XxxEditInp) Filter(ctx context.Context) error` |
+| **修复** | 嵌入 entity，添加 Filter 校验方法 |
+
+#### 16. ListInp 必须嵌入 form.PageInp
+
+| 动作 | 内容 |
+|------|------|
+| **搜索** | `model/input/sysin/<module>.go` 中的 `XxxListInp` 类型 |
+| **违规特征** | ListInp 没有嵌入 `form.PageInp`，导致分页参数缺失 |
+| **正确写法** | `type XxxListInp struct { form.PageInp; Name string; Status int }` |
+| **修复** | 嵌入 `form.PageInp` |
+
+### 后端 API 层（Go）
+
+#### 17. API 契约必须用 g.Meta 声明路由
+
+| 动作 | 内容 |
+|------|------|
+| **搜索** | `api/admin/<module>/<module>.go` 文件中的 Req 结构体 |
+| **违规特征** | Req 结构体缺少 `g.Meta`，或 g.Meta 缺少 `path`、`method`、`tags`、`summary` 任一字段 |
+| **正确写法** | `g.Meta \`path:"/article/list" method:"get" tags:"文章管理" summary:"获取文章列表"\`` |
+| **修复** | 补全 g.Meta 标签的四个字段 |
+
+#### 18. API GET 用 method:get，POST 用 method:post
+
+| 动作 | 内容 |
+|------|------|
+| **搜索** | `api/admin/<module>/<module>.go` 中所有 g.Meta 的 method 标签 |
+| **违规特征** | 查询接口用 `method:"post"`（list/view/export 应该是 GET） |
+| **正确写法** | list/view/export/maxSort 用 `get`，edit/delete/status/switch 用 `post` |
+| **修复** | 修正 method 标签 |
+
+### 后端 Consts + Router 层（Go）
+
+#### 19. 常量必须在 init() 中注册字典
+
+| 动作 | 内容 |
+|------|------|
+| **搜索** | `internal/consts/<module>.go` 文件 |
+| **违规特征** | 定义了 Options 变量但没有在 `init()` 中调用 `dict.RegisterEnums()` |
+| **正确写法** | `func init() { dict.RegisterEnums("XxxStatusOptions", "状态选项", XxxStatusOptions) }` |
+| **修复** | 添加 `init()` 注册 |
+
+#### 20. Router 必须在 genrouter 中注册
+
+| 动作 | 内容 |
+|------|------|
+| **搜索** | `internal/router/genrouter/` 目录下是否有关联的 `<module>.go` 文件 |
+| **违规特征** | 新增了 controller 但没有在 genrouter 中创建对应注册文件 |
+| **正确写法** | `func init() { LoginRequiredRouter = append(LoginRequiredRouter, sys.XxxModule) }` |
+| **修复** | 创建 `<module>.go` 注册文件 |
+
+```
+❌ 违规:
+// genrouter/ 目录下缺少 article.go，路由未注册 → 接口 404
+
+✅ 正确:
+// internal/router/genrouter/article.go
+package genrouter
+import "hotgo/internal/controller/admin/sys"
+func init() {
+    LoginRequiredRouter = append(LoginRequiredRouter, sys.Article)
+}
+```
+
+### Web 前端（Vue 3 + Naive UI）
+
+#### 21. 禁止直接使用 axios
+
+| 动作 | 搜索 `import axios` 或直接调用 `axios.(get|post|put|delete)` |
+|------|------|
+| **违规** | `import axios from 'axios'` 或 `axios.get(...)` |
+| **正确** | `import { http } from '@/utils/http/axios'` → `http.get(...)` |
+
+#### 22. 字典必须用 dict 系统
+
+| 动作 | 搜索模板/setup 中的 `===` / `?` 与状态/类型值比较 |
+|------|------|
+| **违规** | `row.status === 1 ? '启用' : '禁用'` |
+| **正确** | `dict.getLabel('XxxStatusOptions', row.status)` |
+
+#### 23. `dict.getOptions()` 必须包裹 `computed`
+
+| 动作 | 搜索 `getOptions(` |
+|------|------|
+| **违规** | `options: dict.getOptions('XxxOptions')` |
+| **正确** | `options: computed(() => dict.getOptions('XxxOptions'))` |
+
+#### 24. 列表页必须调用 `loadOptions()`
+
+| 动作 | 搜索 index.vue 的 `<script setup>` 中是否有 `loadOptions()` |
+|------|------|
+| **违规** | 列表页 setup 中未调用 `loadOptions()` |
+| **正确** | 在 setup 顶层调用 `loadOptions()` |
+
+### 移动端（Flutter）
+
+#### 25. 禁止 `print()` / `debugPrint()`
+
+| 动作 | 搜索 `print\(` / `debugPrint\(` |
+|------|------|
+| **违规** | `print('something')` / `debugPrint('something')` |
+| **正确** | `AppLogger.d('something')` / `AppLogger.i(...)` / `AppLogger.e(...)` |
+
+#### 26. 所有 API 调用必须有 try-catch
+
+| 动作 | 搜索 `await.*Api\.`，检查是否被 try-catch 包裹 |
+|------|------|
+| **违规** | 裸 `await XxxApi.getList(params)` 无 try-catch |
+| **正确** | 包裹在 try-catch 中，catch 里重置 isLoading 并 update() |
+
+#### 27. 所有 Controller 必须有 `onClose()`
+
+| 动作 | 搜索 `class.*Controller extends`，检查是否有 `onClose()` |
+|------|------|
+| **违规** | Controller 类没有 `onClose()` 方法 |
+| **正确** | 必须有 `@override void onClose() { ...; super.onClose(); }` |
+
+### 桌面端（Flutter Desktop）
+
+#### 28. 关闭按钮必须隐藏到托盘
+
+| 动作 | 搜索 `onWindowClose` 方法 |
+|------|------|
+| **违规** | `onWindowClose` 中直接 `exit(0)` 或 `windowManager.close()` |
+| **正确** | `await windowManager.hide()` |
+
+### 小程序（Uni-app）
+
+#### 29. 禁止直接调微信原生 API
+
+| 动作 | 搜索 `wx\.` |
+|------|------|
+| **违规** | `wx.request(...)` / `wx.getStorageSync(...)` |
+| **正确** | `uni.request(...)` / `uni.getStorageSync(...)` |
+
+#### 30. 禁止 rpx 和 px 混用
+
+| 动作 | 扫描 `<style>` 块中的 CSS |
+|------|------|
+| **违规** | 同一文件混用 `rpx` 和 `px` 单位 |
+| **正确** | 统一用 `rpx`（750rpx = 屏幕宽度） |
+
+---
+> **执行顺序**: 先执行本清单的逐项检查 → 发现违规先修 → 修完重新检查 → 全部通过才输出。如果检查项针对的端不适用（如当前不是写 Flutter 代码），跳过该端检查。
 
 ---
 
@@ -224,10 +745,10 @@ description: HotGo v2 全栈开发规范。TRIGGER when user asks about HotGo pr
 
 ### 触发方式
 
-| 触发方式 | 条件 | 行为 |
-|---------|------|------|
-| **主动触发** | 用户说"检查后端规范" / "按规范修复这个文件" / "scan and fix" / "lint 检查" | 立即进入[标准检查流程](#标准检查流程) |
-| **自动嗅探** | 用户贴出代码让 review、描述操作方案让你确认 | 在[回答四步链路](#回答四步链路)的④审查步骤中执行，发现违规主动告知用户并建议进行全量检查 |
+| 触发方式     | 条件                                                     | 行为                                              |
+| -------- | ------------------------------------------------------ | ----------------------------------------------- |
+| **主动触发** | 用户说"检查后端规范" / "按规范修复这个文件" / "scan and fix" / "lint 检查" | 立即进入[标准检查流程](#标准检查流程)                           |
+| **自动嗅探** | 用户贴出代码让 review、描述操作方案让你确认                              | 在[回答四步链路](#回答四步链路)的④审查步骤中执行，发现违规主动告知用户并建议进行全量检查 |
 
 ### 检查范围
 

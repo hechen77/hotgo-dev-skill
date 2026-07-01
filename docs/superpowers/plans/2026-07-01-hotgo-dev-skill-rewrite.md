@@ -88,7 +88,7 @@ description: HotGo v2 全栈开发规范。TRIGGER when user asks about HotGo pr
 | `references/04-后台-开发规范.md` | Vite 代理、Pinia Store、列表/编辑页标准写法、字典系统、权限控制 | 写 Vue3 页面、配代理、加菜单 |
 | `references/05-移动端-开发规范.md` | pubspec 每个依赖详解、Android 签名、文件清单、Controller 规范、WS 体系 | 写 Flutter App 代码 |
 | `references/06-桌面端-开发规范.md` | 窗口管理、系统托盘、自定义标题栏/侧边栏、Forui 主题、与移动端 14 项差异 | 写 Flutter 桌面端代码 |
-| `references/07-小程序-开发规范.md` | pages.json、manifest.json、uv-ui 组件、条件编译、rpx 单位 | 写 Uni-app 小程序代码 |
+| `references/07-小程序-开发规范.md` | pages.json、manifest.json、wot-ui (wot-design-uni) 组件、条件编译、rpx 单位 | 写 Uni-app 小程序代码 |
 | `references/08-通用-常见错误与禁止清单.md` | 五端禁止行为 + 常见错误模式 + 正确做法对照 | 用户报错、代码 review、自查 |
 | `references/09-通用-完整CRUD开发流程.md` | 建表到前端渲染的 16 个文件完整流程 | 新建 CRUD 模块、问"要改哪些文件" |
 | `references/10-后端-HotGo详解与扩展点.md` | 30 个子系统、40+ 扩展点速查总表 | 深入理解框架、做扩展开发 |
@@ -107,7 +107,7 @@ description: HotGo v2 全栈开发规范。TRIGGER when user asks about HotGo pr
 | **Web 后台** | Vue 3 + Naive UI | 04 | BasicTable/BasicModal/BasicForm、字典用 computed | 列表页→04§8 · 编辑页→04§9 · 字典→04§10 · API封装→04§6 · 权限→04§11 · 路由→04§12 · 避坑→08§2 |
 | **移动端 App** | Flutter + GetX + TDesign | 05 | Controller 分离、try-catch 全覆盖、AppLogger | 创建→05§1 · pubspec→05§2 · HTTP→05§8 · Controller→05§13 · Service→05§10 · WS→05§15 · 路由→05§11 · 避坑→08§3 |
 | **桌面端** | Flutter Desktop + Forui + TDesign | 06 | 窗口管理、托盘、与移动端 14 项差异 | 创建→06§1 · 窗口→06§7 · 托盘→06§8 · 标题栏→06§10 · 侧边栏→06§11 · Forui→06§13 · 差异表→06§17 · 避坑→08§4 |
-| **小程序** | Uni-app + uv-ui | 07 | 条件编译、rpx 单位、pages.json 注册 | 创建→07§1 · manifest→07§2 · pages→07§3 · API→07§9 · 页面→07§10 · 生命周期→07§11 · 避坑→08§5 |
+| **小程序** | Uni-app + wot-ui (wot-design-uni) | 07 | 条件编译、rpx 单位、pages.json 注册 | 创建→07§1 · manifest→07§2 · pages→07§3 · API→07§9 · 页面→07§10 · 生命周期→07§11 · 避坑→08§5 |
 
 > 以上未列出的场景，以及跨端通用问题（如完整 CRUD 流程），读 `08-通用-常见错误与禁止清单` 和 `09-通用-完整CRUD开发流程`。
 ```
@@ -240,7 +240,7 @@ description: HotGo v2 全栈开发规范。TRIGGER when user asks about HotGo pr
 | **Web 前端** | API 封装 → model.ts → index.vue → edit.vue 四人组协同 | 四个文件全部给出 → 字典用法（loadOptions+getLabel+computed） → 组件选型（BasicTable/BasicModal/BasicForm） |
 | **移动端** | Controller + View 分离、try-catch 全覆盖、Service 初始化顺序 | Controller 模板（含 onInit/onClose/loadList） → API 调用 → WS 连接/断开 |
 | **桌面端** | 窗口管理配对、托盘流程、Forui 组件使用 | 窗口/托盘 Service 完整代码 → 自定义标题栏/侧边栏 → main.dart 启动流程 |
-| **小程序** | pages.json 路由注册、条件编译片段、uv-ui 组件 props | 完整页面模板（template + script setup + style scoped） → 配置片段 → rpx 单位 |
+| **小程序** | pages.json 路由注册、条件编译片段、wot-ui (wot-design-uni) 组件 props | 完整页面模板（template + script setup + style scoped） → 配置片段 → rpx 单位 |
 ```
 
 - [ ] **Step 2: 验证 Part 2 完整性**
